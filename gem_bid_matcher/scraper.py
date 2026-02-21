@@ -8,6 +8,9 @@ from urllib.request import urlopen
 from .models import Bid
 
 
+BID_NUMBER_PATTERN = re.compile(r"\b(?:GEM/\d{4}/B/\d+|BID[-\s:]?\d{4,})\b", re.IGNORECASE)
+
+
 def fetch_listing_html(url: str, timeout_s: int = 25) -> str:
     with urlopen(url, timeout=timeout_s) as response:
         return response.read().decode("utf-8", errors="ignore")
@@ -35,6 +38,14 @@ def parse_date(value: str) -> datetime | None:
         except ValueError:
             continue
     return None
+
+
+def extract_bid_number(*parts: str) -> str:
+    for part in parts:
+        match = BID_NUMBER_PATTERN.search(part or "")
+        if match:
+            return match.group(0)
+    return ""
 
 
 class _SimpleTableParser(HTMLParser):
@@ -98,16 +109,20 @@ def parse_bids_from_html(html: str) -> list[Bid]:
         if not title or "title" in title.lower():
             continue
 
+        raw_text = " ".join(cells)
+        bid_number = extract_bid_number(_cell_text(cells, 0), _cell_text(cells, 1), raw_text)
+
         bids.append(
             Bid(
                 title=title,
+                bid_number=bid_number,
                 department=_cell_text(cells, 1),
                 location=_cell_text(cells, 2),
                 category=_cell_text(cells, 3),
                 bid_value=parse_money(_cell_text(cells, 4)),
                 end_date=parse_date(_cell_text(cells, 5)),
                 url=parser.row_hrefs[i] if i < len(parser.row_hrefs) else "",
-                raw_text=" ".join(cells),
+                raw_text=raw_text,
             )
         )
 
@@ -126,11 +141,10 @@ def scrape_bids_from_urls(urls: list[str]) -> list[Bid]:
         except Exception:
             continue
 
-    # de-duplicate by title + department + location
     seen: set[str] = set()
     unique: list[Bid] = []
     for bid in all_bids:
-        key = f"{bid.title}|{bid.department}|{bid.location}"
+        key = f"{bid.bid_number}|{bid.title}|{bid.department}|{bid.location}"
         if key in seen:
             continue
         seen.add(key)

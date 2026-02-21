@@ -5,6 +5,7 @@ from datetime import datetime
 @dataclass
 class Bid:
     title: str
+    bid_number: str = ""
     department: str = ""
     location: str = ""
     category: str = ""

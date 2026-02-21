@@ -2,6 +2,7 @@ import { useState } from "react";
 
 type BidItem = {
   id: number;
+  bidNumber: string;
   title: string;
   buyer: string;
   value: string;
@@ -13,6 +14,7 @@ type BidItem = {
 const bidsData: BidItem[] = [
   {
     id: 1,
+    bidNumber: "GEM/2026/B/510002",
     title: "Supply & Installation of Safety Nets",
     buyer: "Naval Dockyard Visakhapatnam",
     value: "₹12.4 Lakh",
@@ -22,6 +24,7 @@ const bidsData: BidItem[] = [
   },
   {
     id: 2,
+    bidNumber: "GEM/2026/B/510001",
     title: "Acrylic Safety Sign Boards",
     buyer: "Indian Navy",
     value: "₹8.2 Lakh",
@@ -61,6 +64,7 @@ export default function ParkBidFinder() {
         <Card style={{ boxShadow: "0 8px 24px rgba(0,0,0,.08)" }}>
           <CardContent style={{ padding: 16 }}>
             <h2 style={{ fontSize: 24, margin: "0 0 8px" }}>{selectedBid.title}</h2>
+            <p><b>Bid No:</b> {selectedBid.bidNumber}</p>
             <p><b>Buyer:</b> {selectedBid.buyer}</p>
             <p><b>Value:</b> {selectedBid.value}</p>
             <p><b>Deadline:</b> {selectedBid.deadline}</p>
@@ -102,6 +106,7 @@ export default function ParkBidFinder() {
           >
             <CardContent style={{ padding: 16 }}>
               <h2 style={{ margin: "0 0 8px", fontSize: 18 }}>{bid.title}</h2>
+              <p style={{ margin: "0 0 4px", color: "#4b5563" }}>Bid No: {bid.bidNumber}</p>
               <p style={{ margin: "0 0 4px", color: "#4b5563" }}>{bid.buyer}</p>
               <p style={{ margin: "0 0 4px" }}>{bid.value}</p>
               <p style={{ margin: "0 0 4px" }}>Deadline: {bid.deadline}</p>

@@ -1,8 +1,9 @@
 # GeM Bid Matcher + Park Bid Finder UI
 
-This project now supports two things:
+This project supports:
 1. **GeM advanced-search based sourcing** of bid pages using keywords.
 2. A **Park Bid Finder** frontend component in React for quick shortlist review.
+3. **Bid number extraction/display** in backend output and frontend cards.
 
 ## Advanced search on GeM portal
 
@@ -26,8 +27,10 @@ python -m gem_bid_matcher.cli \
   --buyer "Indian Navy"
 ```
 
+## Bid Number
+
+- `Bid.bid_number` is now part of parsed and ranked output.
+- Parser extracts patterns like `GEM/2026/B/510001` from bid title/row text.
+- UI shows `Bid No` in list and details.
+
 If GeM page structure changes, tune `gem_bid_matcher/scraper.py` parser.
-
-## Frontend component
-
-`frontend/ParkBidFinder.tsx` follows your requested list-detail layout with score cards and bid detail actions.
