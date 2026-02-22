@@ -17,15 +17,26 @@ def build_parser() -> argparse.ArgumentParser:
     source.add_argument("--source-url", help="Bid listing URL")
     source.add_argument("--source-file", help="Path to saved HTML page")
 
-    parser.add_argument("--gem-advanced-search", action="store_true", help="Fetch from GeM advanced-search URLs built from keywords")
+    parser.add_argument(
+        "--gem-advanced-search",
+        action="store_true",
+        help="Fetch from GeM advanced-search URLs built from keywords",
+    )
     parser.add_argument("--location", action="append", default=[], help="Preferred location")
     parser.add_argument("--skill", action="append", default=[], help="Skill/category keyword")
     parser.add_argument("--experience", action="append", default=[], help="Experience keyword")
     parser.add_argument("--buyer", action="append", default=[], help="Preferred buyer/department")
     parser.add_argument("--min-value", type=float, default=0.0, help="Minimum bid value")
     parser.add_argument("--limit", type=int, default=20, help="Maximum results")
-    parser.add_argument("--use-park-profile", action="store_true", help="Use built-in Park Enterprises profile (Vizag + Navy + requested keywords)")
-    parser.add_argument("--print-search-urls", help="Print generated advanced search URLs for a base search page URL")
+    parser.add_argument(
+        "--use-park-profile",
+        action="store_true",
+        help="Use built-in Park Enterprises profile (Vizag + Navy + requested keywords)",
+    )
+    parser.add_argument(
+        "--print-search-urls",
+        help="Print generated advanced search URLs for a base search page URL",
+    )
     return parser
 
 
@@ -46,8 +57,9 @@ def _load_bids(args: argparse.Namespace, criteria: MatchCriteria):
     if args.source_file:
         return scrape_bids_from_file(args.source_file), []
     if args.gem_advanced_search:
+        keywords = criteria.required_skills or ["safety nets", "safety posters", "acrylic boards"]
         location = criteria.locations[0] if criteria.locations else None
-        search_urls = build_gem_advanced_search_urls(criteria.required_skills, location=location)
+        search_urls = build_gem_advanced_search_urls(keywords, location=location)
         return scrape_bids_from_urls(search_urls), search_urls
     raise SystemExit("Provide one source: --source-url, --source-file, or --gem-advanced-search")
 
@@ -71,7 +83,7 @@ def main() -> None:
         output["suggested_search_urls"] = build_keyword_search_urls(
             base_url=args.print_search_urls,
             location=(criteria.locations[0] if criteria.locations else "Visakhapatnam"),
-            keywords=criteria.required_skills,
+            keywords=(criteria.required_skills or ["safety nets", "safety posters", "acrylic boards"]),
         )
     if gem_urls:
         output["gem_advanced_search_urls"] = gem_urls

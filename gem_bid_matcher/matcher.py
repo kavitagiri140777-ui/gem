@@ -16,7 +16,14 @@ def rank_bids(bids: list[Bid], criteria: MatchCriteria) -> list[RankedBid]:
         score = 0.0
 
         searchable = " ".join(
-            [bid.title, bid.department, bid.location, bid.category, bid.raw_text]
+            [
+                bid.bid_number,
+                bid.title,
+                bid.department,
+                bid.location,
+                bid.category,
+                bid.raw_text,
+            ]
         )
 
         if bid.bid_value < criteria.min_bid_value:
